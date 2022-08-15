@@ -10,3 +10,9 @@ Esc - pause game
 
 # Save and Load System
 Player is able to save their progress at any time, by simply pressing the Ecs key and clicking save button. Game automatically saves after completing a level. Current game save will be deleted when player loses all their lives.
+
+# Screen Shots
+![screen01] (Arkanoid_Clone/Arkanoid_Clone/Assets/ScreenShots/screenShot_01.png)
+ <br />
+ ![screen02] (Arkanoid_Clone/Arkanoid_Clone/Assets/ScreenShots/screenShot_02.png)
+ 
