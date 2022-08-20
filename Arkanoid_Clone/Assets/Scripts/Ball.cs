@@ -6,7 +6,9 @@ public class Ball : MonoBehaviour
 {
     public float ballSpeed;
     public bool inPlay;
-  
+    public float timeToFullSpeed;
+
+    private float currentBallDirection;
 
     private Rigidbody2D rb;
 
@@ -18,13 +20,15 @@ public class Ball : MonoBehaviour
    
     void Update()
     {
+       
+        // Debug.Log($"direction : {rb.velocity.normalized.y} ");
         if (Settings.instance.playerControlls.KeyBoard.Launch.triggered && Time.timeScale != 0)
         {
             if (!inPlay)
             {
                 Launch();
             }
-            
+
         }
         if (!inPlay)
         {
@@ -32,24 +36,46 @@ public class Ball : MonoBehaviour
                                              GameManager.instance.startingBallPosition.position.y,
                                              GameManager.instance.startingBallPosition.position.z);
         }
-       
-    }
+        if (inPlay)
+        {
+            if (rb.velocity.y < ballSpeed || rb.velocity.y > ballSpeed)
+            {
+                if (rb.velocity.y > 0)
+                {
+                    currentBallDirection = 1;
+                }
+                else if (rb.velocity.y < 0)
+                {
+                    currentBallDirection = -1;
+                }
+                else
+                {
+                    currentBallDirection = 0;
+                }
 
-    private void FixedUpdate()
-    {
-        
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.SmoothStep(rb.velocity.y, ballSpeed * currentBallDirection, 2 ));
+            }
+        }
+
+
     }
+   
+
+    
     private void Launch()
     {
+       
         inPlay = true;
         float ballDirection = Player.instance.GetComponent<Rigidbody2D>().velocity.normalized.x;
+       // Debug.Log($"Ball direction on launch {ballDirection}");
         rb.velocity = new Vector2(ballDirection * ballSpeed, ballSpeed);
     }
 
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-         SoundManager.PlaySound(Settings.instance.ballBounce, "BallBounce");
+        SoundManager.PlaySound(Settings.instance.ballBounce, "BallBounce");
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -65,7 +91,7 @@ public class Ball : MonoBehaviour
                 BallManager.instance.SpawnBall(GameManager.instance.startingBallPosition);
             }
 
-            Destroy(gameObject);
+            DestroyBall();
         }  
     }
 
