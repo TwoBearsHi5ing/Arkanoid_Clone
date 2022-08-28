@@ -8,7 +8,8 @@ public class Ball : MonoBehaviour
     public bool inPlay;
     public float timeToFullSpeed;
 
-    private float currentBallDirection;
+    private float currentBallDirection_y;
+    private float currentBallDirection_x;
 
     private Rigidbody2D rb;
 
@@ -17,11 +18,10 @@ public class Ball : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         inPlay = false;
     }
-   
+
     void Update()
     {
-       
-        // Debug.Log($"direction : {rb.velocity.normalized.y} ");
+
         if (Settings.instance.playerControlls.KeyBoard.Launch.triggered && Time.timeScale != 0)
         {
             if (!inPlay)
@@ -36,38 +36,40 @@ public class Ball : MonoBehaviour
                                              GameManager.instance.startingBallPosition.position.y,
                                              GameManager.instance.startingBallPosition.position.z);
         }
+    }
+
+    private void FixedUpdate()
+    {
         if (inPlay)
         {
             if (rb.velocity.y < ballSpeed || rb.velocity.y > ballSpeed)
             {
                 if (rb.velocity.y > 0)
                 {
-                    currentBallDirection = 1;
+                    currentBallDirection_y = 1;
                 }
                 else if (rb.velocity.y < 0)
                 {
-                    currentBallDirection = -1;
+                    currentBallDirection_y = -1;
                 }
                 else
                 {
-                    currentBallDirection = 0;
+                    currentBallDirection_y = 0;
                 }
 
-                rb.velocity = new Vector2(rb.velocity.x, Mathf.SmoothStep(rb.velocity.y, ballSpeed * currentBallDirection, 2 ));
-            }
+                rb.velocity = new Vector2(rb.velocity.x, Mathf.SmoothStep(rb.velocity.y, ballSpeed * currentBallDirection_y, 2));
+            }     
+
         }
-
-
     }
-   
 
-    
+
     private void Launch()
     {
-       
+
         inPlay = true;
         float ballDirection = Player.instance.GetComponent<Rigidbody2D>().velocity.normalized.x;
-       // Debug.Log($"Ball direction on launch {ballDirection}");
+        // Debug.Log($"Ball direction on launch {ballDirection}");
         rb.velocity = new Vector2(ballDirection * ballSpeed, ballSpeed);
     }
 
@@ -75,7 +77,7 @@ public class Ball : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         SoundManager.PlaySound(Settings.instance.ballBounce, "BallBounce");
-        
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -92,7 +94,7 @@ public class Ball : MonoBehaviour
             }
 
             DestroyBall();
-        }  
+        }
     }
 
     public void DestroyBall()
@@ -100,5 +102,5 @@ public class Ball : MonoBehaviour
         Destroy(gameObject);
     }
 
-   
+
 }
